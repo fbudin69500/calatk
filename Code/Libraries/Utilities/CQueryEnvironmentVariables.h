@@ -39,6 +39,7 @@ class delimiter_istream_iterator: public iterator< input_iterator_tag, T>
     istream * _input;
     char _delim;
     string _value;
+
 public:
     delimiter_istream_iterator( char delim = T_delim ): _input( 0 ), _delim( delim ) {}
     delimiter_istream_iterator( istream & in, char delim = T_delim ): _input( &in ), _delim( delim ) { ++*this; }
@@ -60,6 +61,11 @@ public:
 
     bool operator !=( const delimiter_istream_iterator & rhs ) const {
         return _input != rhs._input;
+    }
+
+	// xutility uses == instead of != for comparison in the std::copy method
+    bool operator ==( const delimiter_istream_iterator & rhs ) const {
+        return _input == rhs._input;
     }
 };
 
