@@ -88,7 +88,7 @@ endif()
 set( proj ImageViewer )
 ExternalProject_Add( ImageViewer
   GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/TubeTK/ImageViewer.git"
-  GIT_TAG "361e639e999d2d8f3aa093a6611398798099c89c"
+  GIT_TAG "6eb0857000fa09d9fc7c452100c46da9ee31d4a1"
   SOURCE_DIR "${CMAKE_BINARY_DIR}/ImageViewer"
   BINARY_DIR ImageViewer-Build
   CMAKE_GENERATOR ${gen}
