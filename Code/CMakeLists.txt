@@ -112,5 +112,6 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Statistics)
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/External)
 
 # Set up testing
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Testing)
-
+if(BUILD_TESTING)
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Testing)
+endif(BUILD_TESTING)
