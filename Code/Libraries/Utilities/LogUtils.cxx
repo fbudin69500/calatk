@@ -17,6 +17,7 @@
 *
 */
 
+#include <string>
 #include "LogUtils.h"
 
 //--------------------
@@ -27,7 +28,7 @@ namespace CALATK
 {
 
 void LogRegister::register_stream( std::ostream& stream, unsigned int minLevel, unsigned int maxLevel, unsigned int streamId )
-{ 
+{
   LevelRangeType range;
   range.levelFrom = minLevel;
   range.levelTo = maxLevel;
@@ -108,7 +109,7 @@ void LogBuffer::flush() {
 
 LogStream::LogStream()
   : std::ostream(&buffer), buffer(this)
-{ 
+{
 }
 
 
@@ -124,10 +125,10 @@ LogLevelManipulator log_level( unsigned int n)
 
 
 std::ostream& operator<<(std::ostream& out, LogLevelManipulator l) {
-  
+
 // First flush the stream
   out << std::flush;
-  
+
 // Now set the level
   out.iword(LogStream::level_index) = l.value;
   return out;

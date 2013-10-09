@@ -17,6 +17,7 @@
 *
 */
 
+#define _USE_32BIT_TIME_T
 #include "Timer.h"
 
 Timer
@@ -33,7 +34,7 @@ Timer
   {
     _ftime(_lastStartTime);
     _isRunning  = true;
-  }  
+  }
 }
 
 void
@@ -44,12 +45,12 @@ Timer
   {
     timeb stopTime;
     _ftime(stopTime);
-    
-    _totalStartToStopSeconds += 
+
+    _totalStartToStopSeconds +=
   static_cast<unsigned long>(stopTime.time - _lastStartTime.time);
 
-    _additionalTotalStartToStopMilliseconds += 
-  static_cast<long>(stopTime.millitm) - 
+    _additionalTotalStartToStopMilliseconds +=
+  static_cast<long>(stopTime.millitm) -
   static_cast<long>(_lastStartTime.millitm);
 
     _isRunning = false;
@@ -100,9 +101,9 @@ Timer
 {
   if (_isRunning)
   {
-    timeb now; 
+    timeb now;
     _ftime(now);
-    return _totalStartToStopSeconds + 
+    return _totalStartToStopSeconds +
   static_cast<unsigned long>(now.time - _lastStartTime.time);
   }
   else
@@ -111,41 +112,41 @@ Timer
   }
 }
 
-std::string 
+std::string
 Timer
 ::getTime() const
 {
   unsigned long sec;
   unsigned long msec;
-  
+
   if (_isRunning)
   {
     timeb now;
     _ftime(now);
-    sec = 
-    _totalStartToStopSeconds + 
+    sec =
+    _totalStartToStopSeconds +
   static_cast<unsigned long>(now.time - _lastStartTime.time);
     msec =
     _additionalTotalStartToStopMilliseconds
   + static_cast<long>(now.millitm)
-  - static_cast<long>(_lastStartTime.millitm);     
+  - static_cast<long>(_lastStartTime.millitm);
   }
   else
   {
-    sec = _totalStartToStopSeconds; 
+    sec = _totalStartToStopSeconds;
     msec = _additionalTotalStartToStopMilliseconds;
   }
 
   unsigned long hours = sec / (60 * 60);
   sec -= hours * 60 * 60;
-  
+
   unsigned long minutes = sec / 60;
   sec -= minutes * 60;
 
   std::ostringstream oss;
-  oss << hours << ":" 
+  oss << hours << ":"
     << std::setw(2) << std::setfill('0') << minutes << ":"
-    << std::setw(2) << std::setfill('0') << sec << "." 
+    << std::setw(2) << std::setfill('0') << sec << "."
     << std::setw(3) << std::setfill('0') << msec;
 
   return oss.str();
@@ -159,16 +160,16 @@ Timer
   {
     timeb now;
     _ftime(now);
-    unsigned long seconds = _totalStartToStopSeconds + 
+    unsigned long seconds = _totalStartToStopSeconds +
   static_cast<unsigned long>(now.time - _lastStartTime.time);
-    
+
     return seconds * 1000 + _additionalTotalStartToStopMilliseconds
   + static_cast<long>(now.millitm)
-  - static_cast<long>(_lastStartTime.millitm);     
+  - static_cast<long>(_lastStartTime.millitm);
   }
   else
   {
-    return _totalStartToStopSeconds * 1000 
+    return _totalStartToStopSeconds * 1000
   + _additionalTotalStartToStopMilliseconds;
   }
 }
@@ -177,6 +178,10 @@ void
 Timer
 ::_ftime( timeb& theTime ) const
 {
+#ifdef WIN32
+	struct _timeb * timeBuffer = (_timeb *)(&theTime);
+	_ftime_s(timeBuffer);
+#else
   struct timeval timeVal;
   struct timezone timeZone;
   gettimeofday( &timeVal, &timeZone );
@@ -184,5 +189,6 @@ Timer
   theTime.millitm = timeVal.tv_usec / 1000;
   theTime.timezone = timeZone.tz_minuteswest;
   theTime.dstflag = timeZone.tz_dsttime;
+#endif
 }
 
