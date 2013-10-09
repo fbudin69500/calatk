@@ -21,6 +21,7 @@
 #define VECTOR_ARRAY_TXX
 
 #include "VectorArray.h"
+#include "vnl/vnl_math.h"
 #include <cstring>
 
 namespace CALATK
@@ -622,7 +623,7 @@ void VectorArray< T, VImageDimension >::SaveDivideCellwise(VectorArray* im, T mi
   for ( unsigned int uiI = 0; uiI < m_Length; ++uiI )
     {
       T currentValue = im->GetValue( uiI );
-      if ( fabs( currentValue ) >= minAbsValue )
+      if ( vnl_math_abs( currentValue ) >= minAbsValue )
         {
           this->SetValue( uiI, this->GetValue( uiI ) / im->GetValue( uiI ) );
         }
@@ -651,7 +652,7 @@ void VectorArray< T, VImageDimension >::SaveDivideElementwise(VectorArray* im, T
       for ( unsigned x = 0; x<szX; ++x )
       {
           T currentValue = im->GetValue( x, y, z, 0 );
-          if ( fabs( currentValue ) >= minAbsValue )
+          if ( vnl_math_abs( currentValue ) >= minAbsValue )
           {
             for ( unsigned d = 0; d<dim; ++d )
             {

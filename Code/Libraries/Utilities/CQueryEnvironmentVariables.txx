@@ -20,6 +20,7 @@
 #ifndef C_QUERY_ENVIRONMENT_VARIABLES_TXX
 #define C_QUERY_ENVIRONMENT_VARIABLES_TXX
 
+// CalaTK includes
 #include "CQueryEnvironmentVariables.h"
 #include "ApplicationUtils.h"
 
