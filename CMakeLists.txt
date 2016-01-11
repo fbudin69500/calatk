@@ -84,6 +84,17 @@ if( USE_SYSTEM_ITK )
   find_library(FFTWF_LIB fftw3f)
 endif()
 
+#
+# SlicerExecutionModel Setup (ImageViewer and COMPILE_CLP_MODULES)
+#
+option( USE_SYSTEM_SlicerExecutionModel "Exclude SlicerExecutionModel from SuperBuild and use an existing build instead." OFF )
+mark_as_advanced( USE_SYSTEM_SlicerExecutionModel )
+if( USE_SYSTEM_SlicerExecutionModel )
+  find_package( SlicerExecutionModel REQUIRED )
+  include( ${SlicerExecutionModel_USE_FILE} )
+  include( ${GenerateCLP_USE_FILE} )
+endif()
+
 # Superbuild setup
 option( CALATK_USE_SUPERBUILD
   "Build calatk and the projects it depends on via SuperBuild.cmake." ON )

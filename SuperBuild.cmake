@@ -55,7 +55,7 @@ set ( COMMON_PROJECT_COMPILER_FLAGS
   set( proj ITK )
   ExternalProject_Add( ${proj}
     GIT_REPOSITORY "${GIT_PROTOCOL}://itk.org/ITK.git"
-    GIT_TAG "v4.3.1"
+    GIT_TAG "v4.9rc03"
     SOURCE_DIR "${CMAKE_BINARY_DIR}/ITK"
     BINARY_DIR ITK-Build
     CMAKE_GENERATOR ${gen}
@@ -70,25 +70,45 @@ set ( COMMON_PROJECT_COMPILER_FLAGS
       -DITKGroup_IO:BOOL=ON
       -DITKGroup_Filtering:BOOL=ON
       -DITKGroup_Nonunit:BOOL=ON
-      -DITK_BUILD_ALL_MODULES:BOOL=OFF
+      -DITK_BUILD_DEFAULT_MODULES:BOOL=OFF
       -DModule_ITKTestKernel:BOOL=ON
     INSTALL_COMMAND ""
     )
   set( ITK_DIR "${base}/ITK-Build" )
   set( CALATK_DEPENDS ${CALATK_DEPENDS} "ITK" )
+  set( ImageViewer_DEPENDS ITK )
+  set( SlicerExecutionModel_DEPENDS ITK )
 endif( NOT USE_SYSTEM_ITK )
+
+if( NOT USE_SYSTEM_SlicerExecutionModel )
+  ExternalProject_Add( SlicerExecutionModel
+    GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/Slicer/SlicerExecutionModel.git"
+    GIT_TAG "311eff9038be165c1341dab90196fbd7466e715a"
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/SlicerExecutionModel"
+    BINARY_DIR SlicerExecutionModel-Build
+    CMAKE_GENERATOR ${gen}
+    CMAKE_ARGS
+        ${COMMON_PROJECT_COMPILER_FLAGS}
+      "-DCMAKE_BUILD_TYPE:STRING=${build_type}"
+      "-DITK_DIR:PATH=${ITK_DIR}"
+    INSTALL_COMMAND ""
+    DEPENDS
+      ${SlicerExecutionModel_DEPENDS}
+    )
+  set( SlicerExecutionModel_DIR "${base}/SlicerExecutionModel-Build" )
+  list( APPEND ImageViewer_DEPENDS SlicerExecutionModel )
+  list( APPEND CALATK_DEPENDS SlicerExecutionModel )
+endif()
 
 ##
 ## A conventient 2D/3D image viewer that can handle anisotropic spacing.
 ##
-set( ImageViewer_DEPENDS )
-if( NOT USE_SYSTEM_ITK )
-  set( ImageViewer_DEPENDS ITK )
-endif()
 set( proj ImageViewer )
 ExternalProject_Add( ImageViewer
-  GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/TubeTK/ImageViewer.git"
-  GIT_TAG "6eb0857000fa09d9fc7c452100c46da9ee31d4a1"
+#  GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/KitwareMedical/ImageViewer.git"
+#  GIT_TAG "2f70d781330c37b738d9fda6b24c86a5781b420a"
+  GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/fbudin69500/ImageViewer.git"
+  GIT_TAG "93e5003a8fb514e9d939ce9cddd7202556dde686"
   SOURCE_DIR "${CMAKE_BINARY_DIR}/ImageViewer"
   BINARY_DIR ImageViewer-Build
   CMAKE_GENERATOR ${gen}
@@ -96,6 +116,7 @@ ExternalProject_Add( ImageViewer
       ${COMMON_PROJECT_COMPILER_FLAGS}
     "-DCMAKE_BUILD_TYPE:STRING=${build_type}"
     "-DITK_DIR:PATH=${ITK_DIR}"
+    "-DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}"
   INSTALL_COMMAND ""
   DEPENDS
     ${ImageViewer_DEPENDS}
@@ -114,8 +135,10 @@ ExternalProject_Add( ${proj}
       ${COMMON_PROJECT_COMPILER_FLAGS}
     -DBUILD_TESTING:BOOL=${testing}
     -DBUILD_DOCUMENTATION:BOOL=${BUILD_DOCUMENTATION}
+    -DCOMPILE_APPLICATIONS:BOOL=${COMPILE_APPLICATIONS}
     -DCALATK_USE_SUPERBUILD:BOOL=FALSE
     -DITK_DIR:PATH=${ITK_DIR}
+    -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
     -DFFTWF_LIB:FILEPATH=${CMAKE_BINARY_DIR}/ITK-Build/fftw/lib/libfftw3f.a
     -DFFTW_LIB:FILEPATH=${CMAKE_BINARY_DIR}/ITK-Build/fftw/lib/libfftw3.a
     -DFFTW_PATH:PATH=${CMAKE_BINARY_DIR}/ITK-Build/fftw/include

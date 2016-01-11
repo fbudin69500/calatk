@@ -1,16 +1,16 @@
 option(COMPILE_CLP_MODULES "Build the Slicer CLP Modules" ON)
 if(COMPILE_CLP_MODULES)
   #
-  # Include everything to build generateclp
-  #
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/External/SlicerExecutionModel)
-
   #
   # Include GenerateCLP
   #
-  find_package(GenerateCLP REQUIRED)
-  include(${GenerateCLP_USE_FILE})
-
+  find_package( SlicerExecutionModel REQUIRED )
+  include( ${SlicerExecutionModel_USE_FILE} )
+  include( ${GenerateCLP_USE_FILE} )
+  # Finding SlicerExecutionModel's package resets the IO factory and creates issues.
+  # We need to find ITK's package again to configure ITKIOFactoryRegistration correctly.
+  find_package( ITK REQUIRED )
+  include( ${ITK_USE_FILE} )
   #
   # Define a function for adding an application with an optional set of
   # libraries to link against (with GenerateCLP)

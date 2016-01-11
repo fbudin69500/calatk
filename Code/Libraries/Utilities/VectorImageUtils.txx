@@ -3032,16 +3032,16 @@ template <class T, unsigned int VImageDimension >
 typename ITKAffineTransform<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension >::readAffineTransformITK(const std::string& filename) {
 
   // initialize the reader
-  itk::TransformFileReader::Pointer reader = itk::TransformFileReader::New();
+  typename itk::TransformFileReaderTemplate<T>::Pointer reader = itk::TransformFileReaderTemplate<T>::New();
 
   // link the reader to the file and open the file
   reader->SetFileName(filename);
   reader->Update();
 
   // extract the transform
-  typedef itk::TransformFileReader::TransformListType* TransformListType;
+  typedef typename itk::TransformFileReaderTemplate<T>::TransformListType* TransformListType;
   TransformListType transformList = reader->GetTransformList();
-  itk::TransformFileReader::TransformListType::const_iterator it;
+  typename itk::TransformFileReaderTemplate<T>::TransformListType::const_iterator it;
   it = transformList->begin();
   typename ITKAffineTransform<T,VImageDimension>::Type::Pointer transform;
   if (!strcmp((*it)->GetNameOfClass(), "AffineTransform"))
